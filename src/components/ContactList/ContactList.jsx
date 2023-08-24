@@ -3,37 +3,26 @@ import { Item, Loading } from './ContactList.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteContact, fetchContacts } from 'redux/operations';
 import {
-  getContacts,
-  getError,
-  getFilter,
-  getIsLoading,
+  selectError,
+  selectFilteredContacts,
+  selectIsLoading,
 } from 'redux/selectors';
 
 const ContactList = () => {
-  const contacts = useSelector(getContacts);
-  const isLoading = useSelector(getIsLoading);
-  const error = useSelector(getError);
-  const filter = useSelector(getFilter);
+  const contacts = useSelector(selectFilteredContacts);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchContacts());
   }, [dispatch]);
 
-  const getFilteredContacts = () => {
-    const normalizedFilter = filter.toLowerCase();
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
-  };
-
-  const filteredContacts = getFilteredContacts();
-
   return (
     <ul>
       {isLoading && !error && <Loading>Request in progress...</Loading>}
-      {!filteredContacts && <p>There are no contacts!</p>}
-      {filteredContacts.map(contact => {
+      {!contacts && <p>There are no contacts!</p>}
+      {contacts.map(contact => {
         return (
           <Item key={contact.id}>
             {contact.name}: {contact.number}
